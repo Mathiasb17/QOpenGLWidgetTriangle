@@ -1,6 +1,7 @@
 #include "gldisplay.h"
 
 #include <iostream>
+#include <cmath>
 
 #include <QMouseEvent>
 
@@ -27,16 +28,66 @@ void GLDisplay::mousePressEvent(QMouseEvent *e)
 
 void GLDisplay::mouseMoveEvent(QMouseEvent *e)
 {
-
+    if(e->MouseButtonPress)
+    {
+        QVector2D displacement(e->localPos().x()-mousePressPosition.x(),
+                               e->localPos().y()-mousePressPosition.y());
+        QVector2D absisca(1,0); QVector2D ordinates(0,1);
+        float dota = QVector2D::dotProduct(displacement, absisca);
+        float dotb = QVector2D::dotProduct(displacement, ordinates);
+        if(e->buttons() == Qt::LeftButton)
+        {
+            if(fabs(dotb) > fabs(dota))
+            {
+                if(e->localPos().y() > mousePressPosition.y())
+                    matrix.rotate(0.5, QVector3D(1,0,0));
+                if(e->localPos().y() < mousePressPosition.y())
+                    matrix.rotate(-0.5, QVector3D(1,0,0));
+            }
+            if(fabs(dota) > fabs(dotb))
+            {
+                if(e->localPos().x() > mousePressPosition.x())
+                    matrix.rotate(0.5, QVector3D(0,1,0));
+                if(e->localPos().x() < mousePressPosition.y())
+                    matrix.rotate(-0.5, QVector3D(0,1,0));
+            }
+        }
+        if(e->buttons() == Qt::RightButton)
+        {
+            if(fabs(dotb) > fabs(dota))
+            {
+                if(e->localPos().y() > mousePressPosition.y())
+                    matrix.translate(0,-0.02,0);
+                if(e->localPos().y() < mousePressPosition.y())
+                    matrix.translate(0,0.02,0);
+            }
+            if(fabs(dota) > fabs(dotb))
+            {
+                if(e->localPos().x() > mousePressPosition.x())
+                    matrix.translate(0.02,0,0);
+                if(e->localPos().x() < mousePressPosition.y())
+                    matrix.translate(-0.02,0,0);
+            }
+        }
+        if(e->buttons() == Qt::MidButton)
+        {
+            if(e->localPos().y() > mousePressPosition.y())
+                matrix.translate(0,0,0.02);
+            if(e->localPos().y() < mousePressPosition.y())
+                matrix.translate(0,0,-0.02);
+        }
+    }
+    update();
 }
 
 void GLDisplay::mouseReleaseEvent(QMouseEvent *e)
 {
-
+    e =e;
 }
 
 void GLDisplay::timerEvent(QTimerEvent *e)
 {
+    e = e;
     update();
 }
 
