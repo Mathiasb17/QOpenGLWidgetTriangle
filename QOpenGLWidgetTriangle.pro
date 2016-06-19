@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     gldisplay.cpp \
     triangle.cpp \
-    particles.cpp
+    particles.cpp \
+    mesh.cpp
 
 HEADERS  += mainwindow.h \
     gldisplay.h \
     triangle.h \
-    particles.h
+    particles.h \
+    mesh.h
 
 FORMS    += mainwindow.ui
 
