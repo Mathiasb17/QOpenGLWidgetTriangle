@@ -6,6 +6,8 @@
 
 QT       += core gui widgets
 
+LIBS += -lassimp
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = QOpenGLWidgetTriangle
@@ -32,4 +34,5 @@ DISTFILES += \
     simple.frag
 
 
-RESOURCES += shaders.qrc
+RESOURCES += shaders.qrc \
+             models.qrc

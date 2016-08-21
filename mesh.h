@@ -9,6 +9,9 @@
 #include <vector>
 #include <string>
 
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class Mesh : protected QOpenGLFunctions
 {
@@ -18,7 +21,7 @@ public:
 
     void drawMesh(QOpenGLShaderProgram *program);
 
-    void loadMesh(std::vector<QVector3D> &positions, std::vector<QVector3D> &normals, std::vector<GLushort> &indices, std::vector<QVector2D> &texcoords);
+    void loadMesh();
 
 private:
     void initMesh();
@@ -26,6 +29,10 @@ private:
     QVector4D color;
 
     std::string m_mesh_path;
+
+    std::vector<QVector3D> m_vertices;
+    std::vector<QVector2D> m_texcoord;
+    std::vector<unsigned int> m_faces;
 
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;

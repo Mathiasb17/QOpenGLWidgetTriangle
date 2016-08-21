@@ -3,6 +3,11 @@
 #include <fstream>
 #include <sstream>
 
+#include <cstdio>
+#include <cstdlib>
+
+#include <QFile>
+
 Mesh::Mesh(std::string mesh_path):
     indexBuf(QOpenGLBuffer::IndexBuffer),
     m_mesh_path(mesh_path)
@@ -15,6 +20,8 @@ Mesh::Mesh(std::string mesh_path):
 
     // Initializes cube geometry and transfers it to VBOs
     initMesh();
+
+    color = QVector4D(0,0,1,1);
 }
 
 Mesh::~Mesh()
@@ -25,28 +32,74 @@ Mesh::~Mesh()
 
 void Mesh::initMesh()
 {
-    std::vector<QVector3D> positions;
-    std::vector<QVector3D> normals;
-    std::vector<GLushort>  indices;
-    std::vector<QVector2D> texcoords;
+    loadMesh();
 
-    loadMesh(positions, normals, indices, texcoords);
+    arrayBuf.bind();
+    arrayBuf.allocate(m_vertices.data(), m_vertices.size() * sizeof(QVector3D));
+
+    indexBuf.bind();
+    indexBuf.allocate(m_faces.data(), m_faces.size() * sizeof(unsigned int));
 }
 
-void Mesh::loadMesh(std::vector<QVector3D> &positions, std::vector<QVector3D> &normals, std::vector<GLushort> &indices, std::vector<QVector2D> &texcoords)
+void Mesh::loadMesh()
 {
-    std::fstream mesh_file;
-    mesh_file.open(m_mesh_path.c_str(), std::ios_base::in);
+    const aiScene* scene = aiImportFile( "/home/mat/Documents/Projets/QOpenGLWidgetTriangle/cube.obj",
+        aiProcess_CalcTangentSpace       |
+            aiProcess_Triangulate            |
+            aiProcess_JoinIdenticalVertices  |
+            aiProcess_SortByPType);
 
-    char line[255];
-    while(mesh_file.getline(line, 255))
-    {
-        std::istringstream sline;
-        std::cout << line << std::endl;
-    }
+      if( !scene)
+      {
+        std::cout << aiGetErrorString() << std::endl;
+        exit(1);
+      }
+
+
+      std::cout << scene->mNumMeshes << " meshes" << std::endl;
+
+      std::cout << scene->mMeshes[0]->mNumVertices << std::endl;
+
+      //loop over meshes
+      for (int i = 0; i < scene->mNumMeshes; ++i)
+      {
+          //loop into current mesh
+          for (int j = 0; j < scene->mMeshes[i]->mNumVertices; ++j)
+          {
+              QVector3D p = QVector3D(scene->mMeshes[i]->mVertices[j].x,
+                                      scene->mMeshes[i]->mVertices[j].y,
+                                      scene->mMeshes[i]->mVertices[j].z);
+              m_vertices.push_back(p);
+          }
+
+          for (int j = 0; j < scene->mMeshes[i]->mNumFaces; ++j)
+          {
+              aiFace f = scene->mMeshes[i]->mFaces[j];
+              for (int k = 0; k < f.mNumIndices; ++k)
+              {
+                  m_faces.push_back(f.mIndices[k]);
+              }
+          }
+      }
+      aiReleaseImport( scene);
 }
 
 void Mesh::drawMesh(QOpenGLShaderProgram *program)
 {
+    // Tell OpenGL which VBOs to use
+    arrayBuf.bind();
+    indexBuf.bind();
 
+    program->setUniformValue("objectColor", color);
+
+//    // Offset for position
+    quintptr offset = 0;
+
+//    // Tell OpenGL programmable pipeline how to locate vertex position data
+    int vertexLocation = program->attributeLocation("a_position");
+    program->enableAttributeArray(vertexLocation);
+    program->setAttributeBuffer(vertexLocation, GL_FLOAT, offset, 3, sizeof(QVector3D));
+
+//    // Draw cube geometry using indices from VBO 1
+    glDrawElements(GL_TRIANGLE_STRIP, m_faces.size(), GL_UNSIGNED_INT, 0);
 }

@@ -14,6 +14,7 @@
 
 #include "triangle.h"
 #include "particles.h"
+#include "mesh.h"
 
 class GLDisplay : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -41,6 +42,10 @@ private:
     //geometry
     Triangle *m_geometry;
     Particles *m_particles;
+    Mesh *m_mesh;
+
+    //lights
+    int m_lightPosLoc;
 
     //shaders
     QOpenGLShaderProgram program;

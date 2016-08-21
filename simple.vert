@@ -1,4 +1,5 @@
 attribute vec4 a_position;
+attribute vec3 a_normal;
 
 uniform mat4 mvp_matrix;
 uniform vec4 objectColor;

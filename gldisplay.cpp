@@ -8,9 +8,16 @@
 GLDisplay::GLDisplay(QWidget *parent):
     QOpenGLWidget(parent),
     m_geometry(0),
-    m_particles(0)
+    m_particles(0),
+    m_mesh(0)
 {
     matrix.translate(0.0, 0.0, -5.0);
+
+    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+    format.setSamples(4);
+    format.setSwapInterval(0);
+    QSurfaceFormat::setDefaultFormat(format);
+    this->setFormat(format);
 }
 
 GLDisplay::~GLDisplay()
@@ -18,6 +25,7 @@ GLDisplay::~GLDisplay()
     makeCurrent();
     delete m_geometry;
     delete m_particles;
+    delete m_mesh;
     doneCurrent();
 }
 
@@ -82,7 +90,7 @@ void GLDisplay::mouseMoveEvent(QMouseEvent *e)
 
 void GLDisplay::mouseReleaseEvent(QMouseEvent *e)
 {
-    e =e;
+    e = e;
 }
 
 void GLDisplay::timerEvent(QTimerEvent *e)
@@ -103,6 +111,7 @@ void GLDisplay::initializeGL()
 
     m_geometry = new Triangle();
     m_particles = new Particles();
+    m_mesh = new Mesh("qrc:///teapot.obj");
 
     timer.start(12, this);
 }
@@ -111,10 +120,9 @@ void GLDisplay::resizeGL(int w, int h)
 {
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    const qreal zNear = 3.0, zFar = 30.0, fov = 45.0;
 
     projection.setToIdentity();
-
     projection.perspective(fov, aspect, zNear, zFar);
 }
 
@@ -123,8 +131,13 @@ void GLDisplay::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     program.setUniformValue("mvp_matrix", projection * matrix);
+
+    m_lightPosLoc = program.uniformLocation("lightPos");
+    program.setUniformValue(m_lightPosLoc, QVector3D(0, 0, 70));
+
     m_geometry->drawTriangle(&program);
     m_particles->drawParticles(&program);
+    m_mesh->drawMesh(&program);
 }
 
 void GLDisplay::initShaders()
