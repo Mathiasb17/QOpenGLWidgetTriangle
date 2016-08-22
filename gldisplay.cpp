@@ -14,7 +14,7 @@ GLDisplay::GLDisplay(QWidget *parent):
     matrix.translate(0.0, 0.0, -5.0);
 
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-    format.setSamples(4);
+    format.setSamples(16);
     format.setSwapInterval(0);
     QSurfaceFormat::setDefaultFormat(format);
     this->setFormat(format);
@@ -109,9 +109,9 @@ void GLDisplay::initializeGL()
 
     glEnable(GL_DEPTH_TEST);
 
-    m_geometry = new Triangle();
-    m_particles = new Particles();
-    m_mesh = new Mesh("qrc:///teapot.obj");
+//    m_geometry = new Triangle();
+//    m_particles = new Particles();
+    m_mesh = new Mesh("");
 
     timer.start(12, this);
 }
@@ -135,8 +135,8 @@ void GLDisplay::paintGL()
     m_lightPosLoc = program.uniformLocation("lightPos");
     program.setUniformValue(m_lightPosLoc, QVector3D(0, 0, 70));
 
-    m_geometry->drawTriangle(&program);
-    m_particles->drawParticles(&program);
+//    m_geometry->drawTriangle(&program);
+//    m_particles->drawParticles(&program);
     m_mesh->drawMesh(&program);
 }
 

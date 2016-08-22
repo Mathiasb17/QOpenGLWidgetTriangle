@@ -34,5 +34,4 @@ DISTFILES += \
     simple.frag
 
 
-RESOURCES += shaders.qrc \
-             models.qrc
+RESOURCES += shaders.qrc

@@ -33,9 +33,11 @@ private:
     std::vector<QVector3D> m_vertices;
     std::vector<QVector2D> m_texcoord;
     std::vector<unsigned int> m_faces;
+    std::vector<QVector3D> m_normals;
 
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
+    QOpenGLBuffer normalBuf;
 };
 
 #endif // MESH_H
