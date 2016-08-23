@@ -85,6 +85,8 @@ void GLDisplay::mouseMoveEvent(QMouseEvent *e)
                 matrix.translate(0,0,-0.02);
         }
     }
+
+    normal = matrix.normalMatrix();
     update();
 }
 
@@ -130,6 +132,8 @@ void GLDisplay::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    program.setUniformValue("normal_matrix", normal);
+
     program.setUniformValue("mvp_matrix", projection * matrix);
 
     m_lightPosLoc = program.uniformLocation("lightPos");
@@ -142,19 +146,15 @@ void GLDisplay::paintGL()
 
 void GLDisplay::initShaders()
 {
-    // Compile vertex shader
     if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/simple.vert"))
         close();
 
-    // Compile fragment shader
     if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/simple.frag"))
         close();
 
-    // Link shader pipeline
     if (!program.link())
         close();
 
-    // Bind shader pipeline for use
     if (!program.bind())
         close();
 }

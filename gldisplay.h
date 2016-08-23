@@ -51,8 +51,9 @@ private:
     QOpenGLShaderProgram program;
 
     //matrices
-    QMatrix4x4 projection;
-    QMatrix4x4 matrix;
+    QMatrix4x4 projection; // projection matrix
+    QMatrix4x4 matrix; //model view matrix
+    QMatrix3x3 normal; // normal matrix
 
     //mouse
     QVector2D mousePressPosition;

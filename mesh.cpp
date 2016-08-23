@@ -62,10 +62,6 @@ void Mesh::loadMesh()
         exit(1);
       }
 
-      std::cout << scene->mNumMeshes << " meshes" << std::endl;
-
-      std::cout << scene->mMeshes[0]->mNumVertices << std::endl;
-
       //loop over meshes
       for (int i = 0; i < scene->mNumMeshes; ++i)
       {
@@ -85,7 +81,6 @@ void Mesh::loadMesh()
               for (int k = 0; k < f.mNumIndices; ++k)
               {
                   m_faces.push_back(f.mIndices[k]);
-                  std::cout << f.mIndices[k] << std::endl;
               }
           }
 
