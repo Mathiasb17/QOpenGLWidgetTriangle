@@ -15,8 +15,7 @@ void main(void)
 {
     gl_Position = mvp_matrix * a_position;
 
-    col = vec4(abs(lightPos.x), abs(lightPos.y), abs(lightPos.z), 1);
-
     vertex = a_position;
     vertexNormal = a_normal;
+    col = vec4(objectColor.x, objectColor.y, objectColor.z, 1);
 }
